@@ -95,18 +95,10 @@ class AutoLogin extends DashboardPageController
             ) {
                 throw new Exception(t('This IP address already exists'));
             }
-
-            try {
-                $ip = new IPAddress($ip);
-            } catch (Exception $e) {
+            
+            if (preg_match("/[^0-9\.:\/A-Za-z]/", $ip) !== 0) {
                 throw new Exception(t('Invalid IP address'));
             }
-
-            if ($ip instanceof IPAddress && $ip->getIp() === null) {
-                throw new Exception(t('Invalid IP address'));
-            }
-
-            $ip = $ip->getIp(IPAddress::FORMAT_IP_STRING);
 
             $user_id = trim($req->get('userID'));
             $user = User::getByUserID($user_id);
