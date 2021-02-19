@@ -2,11 +2,12 @@
 namespace Concrete\Package\AutoLogin\Src\AutoLogin;
 
 use Concrete\Authentication\Concrete\Controller;
+use Concrete\Core\Support\Facade\Application;
+use Concrete\Core\User\Event\User as UserEvent;
 use Concrete\Core\Utility\IPAddress;
-use Symfony\Component\HttpFoundation\IpUtils;
 use Config;
-use Core;
 use Package;
+use Symfony\Component\HttpFoundation\IpUtils;
 use User;
 
 class AutoLogin
@@ -17,8 +18,10 @@ class AutoLogin
             return false;
         }
 
+        $app = Application::getFacadeApplication();
+
         // Retrieve IP
-        $iph = Core::make('helper/validation/ip');
+        $iph = $app->make('helper/validation/ip');
         $ip = $iph->getRequestIP();
         $ip = $ip->getIp(IPAddress::FORMAT_IP_STRING);
 
@@ -59,7 +62,7 @@ class AutoLogin
         }
 
         $u = User::loginByUserID($ip_entry['uID']);
-
+        
         // Use default C5 authentication.
         $concrete = new Controller();
         $concrete->completeAuthentication($u);
